@@ -37,8 +37,15 @@ class Chef
           :app_name,
           arg,
           :kind_of => [String],
-          :required => true,
           :name_attribute => true
+        )
+      end
+
+      def application_id(arg = nil)
+        set_or_return(
+          :application_id,
+          arg,
+          :kind_of => [String]
         )
       end
 
@@ -88,6 +95,16 @@ class Chef
           :user,
           arg,
           :kind_of => [String]
+        )
+      end
+
+      def url(arg = nil)
+        set_or_return(
+          :url,
+          arg,
+          :kind_of => [String],
+          :default => 'https://api.newrelic.com/deployments.xml',
+          :required => true
         )
       end
     end
