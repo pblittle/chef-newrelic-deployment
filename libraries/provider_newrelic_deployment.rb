@@ -43,21 +43,30 @@ class Chef
         )
         r.command curl_command
         r.run_action(:run)
+        r.only_if { curl_command_valid? }
 
         new_resource.updated_by_last_action(true) if r.updated_by_last_action?
       end
+
+      private
 
       def curl_command
         [
           "curl",
           "-H 'x-api-key:#{new_resource.api_key}'",
           "-d 'deployment[app_name]=#{new_resource.name}'",
+          "-d 'deployment[application_id]=#{new_resource.application_id}'",
           "-d 'deployment[description]=#{new_resource.description}'",
           "-d 'deployment[changelog]=#{new_resource.changelog}'",
           "-d 'deployment[revision]=#{new_resource.revision}'",
           "-d 'deployment[user]=#{new_resource.user}'",
-          "https://api.newrelic.com/deployments.xml"
+          new_resource.url
         ].join(' ')
+      end
+
+      def curl_command_valid?
+        !new_resource.host.empty? && !new_resource.api_key.empty? &&
+          (!new_resource.app_name.empty? || !new_resource.application_id.empty?)
       end
     end
   end
